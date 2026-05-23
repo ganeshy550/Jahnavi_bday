@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Georgia', serif; overflow-x: hidden; }
+.confetti-piece { position: fixed; width: 10px; height: 10px; top: -20px; animation: confettiFall linear infinite; z-index: 9999; pointer-events: none; border-radius: 2px; }
+@keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+.floating-heart { position: fixed; animation: floatUp linear infinite; pointer-events: none; z-index: 9998; font-size: 20px; }
+@keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5); opacity: 0.8; } 100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } }
+.star { position: absolute; background: white; border-radius: 50%; animation: twinkle 2s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.5); } }
+#page1 { min-height: 100vh; background: linear-gradient(135deg, #ff9ed8 0%, #c4a0ff 25%, #7eb8ff 50%, #a8edff 75%, #ffb3d9 100%); background-size: 400% 400%; animation: gradientShift 6s ease infinite; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; position: relative; overflow: hidden; text-align: center; }
+@keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.stars-bg { position: absolute; inset: 0; z-index: 0; }
+.welcome-title { font-size: clamp(18px, 4vw, 32px); color: white; text-shadow: 2px 2px 8px rgba(150,0,100,0.4); line-height: 1.6; max-width: 600px; font-style: italic; position: relative; z-index: 1; background: rgba(255,255,255,0.25); border-radius: 20px; padding: 30px 40px; border: 2px solid rgba(255,255,255,0.5); backdrop-filter: blur(10px); margin-bottom: 20px; }
+.welcome-title span { display: block; font-size: clamp(12px, 2.5vw, 18px); margin-top: 10px; color: #fff0f8; }
+.deco-row { position: relative; z-index: 1; font-size: 36px; margin: 10px 0; animation: bounce 1.5s ease-in-out infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.question-box { position: relative; z-index: 2; margin-top: 30px; background: rgba(255,255,255,0.3); border-radius: 20px; padding: 25px 40px; border: 2px solid rgba(255,255,255,0.6); backdrop-filter: blur(10px); }
+.question-box p { font-size: 20px; color: white; text-shadow: 1px 1px 4px rgba(100,0,80,0.5); margin-bottom: 20px; }
+.btn-yes { background: linear-gradient(135deg, #ff4da6, #c44dff); border: none; color: white; font-size: 20px; padding: 15px 40px; border-radius: 50px; cursor: pointer; margin: 0 10px; box-shadow: 0 6px 20px rgba(255,77,166,0.5); transition: all 0.3s; font-family: Georgia, serif; animation: pulse 1.5s ease-in-out infinite; }
+.btn-yes:hover { transform: scale(1.1); }
+@keyframes pulse { 0%, 100% { box-shadow: 0 6px 20px rgba(255,77,166,0.5); } 50% { box-shadow: 0 6px 30px rgba(255,77,166,0.9); } }
+.btn-no { background: linear-gradient(135deg, #7eb8ff, #a78bfa); border: none; color: white; font-size: 18px; padding: 15px 40px; border-radius: 50px; cursor: pointer; margin: 0 10px; box-shadow: 0 4px 15px rgba(126,184,255,0.4); transition: all 0.3s; font-family: Georgia, serif; }
+.video-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: rgba(0,0,0,0.9); border-radius: 15px; padding: 10px; border: 3px solid #ff9ed8; box-shadow: 0 0 40px rgba(255,158,216,0.8); }
+.video-popup video { width: 300px; max-width: 90vw; border-radius: 10px; display: block; }
+.popup-close { position: absolute; top: -10px; right: -10px; background: #ff4da6; border: none; color: white; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.wishes-video-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: rgba(0,0,0,0.92); border-radius: 20px; padding: 15px; border: 3px solid #7eb8ff; box-shadow: 0 0 60px rgba(126,184,255,0.8); max-width: 92vw; }
+.wishes-video-popup video { width: 480px; max-width: 88vw; border-radius: 12px; display: block; }
+.wishes-video-popup p { color: #b3d9ff; font-size: 13px; text-align: center; margin-top: 8px; font-style: italic; }
+.wishes-popup-close { position: absolute; top: -12px; right: -12px; background: #1a73e8; border: none; color: white; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+#pageCelebration { display: none; min-height: 100vh; background: linear-gradient(135deg,#ff69b4,#9b59b6,#3498db); background-size:400% 400%; animation:gradientShift 4s ease infinite; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:40px 20px; position:relative; overflow:hidden; }
+.celebration-text { font-size: clamp(24px,6vw,60px); color:white; text-shadow:3px 3px 15px rgba(0,0,0,0.4); margin-bottom:20px; animation:celebBounce 0.8s ease-in-out infinite alternate; }
+@keyframes celebBounce { from { transform: scale(1); } to { transform: scale(1.05); } }
+.options-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; width:100%; max-width:700px; margin-top:30px; }
+.option-card { background:rgba(255,255,255,0.25); border-radius:20px; padding:25px 20px; border:2px solid rgba(255,255,255,0.5); cursor:pointer; transition:all 0.3s; backdrop-filter:blur(10px); color:white; font-size:16px; font-family:Georgia,serif; }
+.option-card:hover { transform:translateY(-8px); background:rgba(255,255,255,0.4); box-shadow:0 15px 35px rgba(0,0,0,0.3); }
+.option-card .emoji { font-size:40px; margin-bottom:10px; display:block; }
+.option-card h3 { font-size:18px; margin-bottom:8px; }
+.verify-page { display:none; min-height:100vh; position:relative; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+#verifyPage1 { background:linear-gradient(135deg,#ff9800,#e91e63,#9c27b0); }
+#verifyPage2 { background:linear-gradient(135deg,#4caf50,#ff9800,#ff5722); }
+#verifyPage3 { background:linear-gradient(135deg,#2196f3,#03a9f4,#00bcd4); }
+.verify-card { background:rgba(255,255,255,0.2); border-radius:25px; padding:40px; border:2px solid rgba(255,255,255,0.4); backdrop-filter:blur(15px); max-width:500px; width:100%; }
+.verify-card h2 { font-size:28px; color:white; margin-bottom:15px; text-shadow:2px 2px 8px rgba(0,0,0,0.3); }
+.verify-card p { color:rgba(255,255,255,0.9); margin-bottom:20px; font-size:16px; }
+.verify-input { width:100%; padding:15px 20px; border-radius:50px; border:2px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.2); color:white; font-size:18px; text-align:center; outline:none; font-family:Georgia,serif; margin-bottom:5px; }
+.verify-input::placeholder { color:rgba(255,255,255,0.7); font-style:italic; }
+.verify-hint { color:rgba(255,255,255,0.7); font-size:13px; margin-bottom:15px; font-style:italic; }
+.verify-btn { background:rgba(255,255,255,0.3); border:2px solid white; color:white; padding:12px 35px; border-radius:50px; font-size:16px; cursor:pointer; transition:all 0.3s; font-family:Georgia,serif; margin:5px; }
+.verify-btn:hover { background:rgba(255,255,255,0.5); transform:scale(1.05); }
+.verify-error { color:#ffeb3b; font-size:14px; margin-top:10px; display:none; animation:shake 0.4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+.back-btn { margin-top:20px; background:transparent; border:2px solid rgba(255,255,255,0.5); color:white; padding:10px 25px; border-radius:50px; font-size:14px; cursor:pointer; transition:all 0.3s; font-family:Georgia,serif; }
+.back-btn:hover { background:rgba(255,255,255,0.2); }
+.content-page { display:none; min-height:100vh; position:relative; flex-direction:column; align-items:center; padding:30px 20px; }
+#contentPage1 { background:linear-gradient(135deg,#ff6b35,#f7931e,#ff69b4); background-size:400% 400%; animation:gradientShift 5s ease infinite; }
+#contentPage2 { background:linear-gradient(135deg,#ff8c94,#ff9de2,#ffb347); background-size:400% 400%; animation:gradientShift 5s ease infinite; }
+.cartoon-float { position:fixed; font-size:50px; pointer-events:none; z-index:5; animation:cartoonFloat linear infinite; }
+@keyframes cartoonFloat { 0%{transform:translateY(100vh) rotate(-10deg); opacity:0.8;} 100%{transform:translateY(-10vh) rotate(10deg); opacity:0;} }
+.center-video-wrap { background:rgba(0,0,0,0.8); border-radius:20px; padding:15px; border:3px solid rgba(255,255,255,0.5); margin:20px auto; box-shadow:0 0 50px rgba(255,100,0,0.5); max-width:600px; width:100%; }
+.center-video-wrap video { width:100%; border-radius:12px; display:block; }
+.wafer-container { margin:20px auto; cursor:pointer; position:relative; display:inline-block; }
+.wafer-img { font-size:120px; display:block; transition:all 0.3s; animation:waferFloat 2s ease-in-out infinite; }
+@keyframes waferFloat { 0%,100%{transform:scale(1) rotate(-5deg);} 50%{transform:scale(1.1) rotate(5deg);} }
+.wafer-msg { display:none; font-size:40px; animation:popIn 0.5s ease-out; }
+@keyframes popIn { 0%{transform:scale(0) rotate(-10deg);} 80%{transform:scale(1.2) rotate(5deg);} 100%{transform:scale(1) rotate(0deg);} }
+.cake-section { margin-top:20px; text-align:center; }
+.cake-emoji { font-size:80px; display:block; }
+.candle-btn { background:linear-gradient(135deg,#ff4da6,#ffd700); border:none; color:white; font-size:16px; padding:12px 30px; border-radius:50px; cursor:pointer; margin-top:10px; box-shadow:0 4px 15px rgba(255,77,166,0.5); transition:all 0.3s; font-family:Georgia,serif; }
+.candle-btn:hover { transform:scale(1.05); }
+.birthday-banner { display:none; font-size:clamp(24px,5vw,48px); color:white; text-shadow:3px 3px 0px #ff4da6,6px 6px 0px rgba(0,0,0,0.2); animation:bannerPop 0.5s ease-out,wiggle 1s ease-in-out infinite 0.5s; margin:15px 0; }
+@keyframes bannerPop { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+@keyframes wiggle { 0%,100%{transform:rotate(-3deg);} 50%{transform:rotate(3deg);} }
+.mango-runner { position:fixed; font-size:40px; top:80%; pointer-events:none; z-index:200; animation:mangoRun 3s linear infinite; }
+@keyframes mangoRun { 0%{left:-60px;} 100%{left:110vw;} }
+#contentPage3 { background:linear-gradient(180deg,#b3d9ff 0%,#e0f0ff 50%,#b3d9ff 100%); align-items:center; }
+.page3-title { font-size:28px; color:#1a3c6e; text-shadow:1px 1px 3px rgba(0,0,0,0.2); margin:20px 0 10px; font-family:Georgia,serif; }
+.godavari-deco { font-size:30px; margin-bottom:15px; }
+.wish-btn { background:linear-gradient(135deg,#1a73e8,#0d47a1); border:none; color:white; font-size:16px; padding:14px 30px; border-radius:50px; cursor:pointer; margin:8px; box-shadow:0 4px 15px rgba(26,115,232,0.5); transition:all 0.3s; font-family:Georgia,serif; }
+.wish-btn:hover { transform:scale(1.05); box-shadow:0 6px 20px rgba(26,115,232,0.7); }
+.text-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10000; background:linear-gradient(135deg,#fff0f8,#f0f8ff); border-radius:25px; padding:30px 40px; max-width:450px; width:90%; border:3px solid #ff9ed8; box-shadow:0 0 50px rgba(255,158,216,0.8); text-align:center; animation:popIn 0.4s ease-out; }
+.text-popup h3 { color:#d63384; font-size:22px; margin-bottom:15px; }
+.text-popup p { color:#555; line-height:1.7; font-size:15px; }
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; }
+.page-header-text { color:white; text-shadow:2px 2px 8px rgba(0,0,0,0.3); margin:15px 0; font-size:clamp(20px,4vw,32px); }
+.upload-note { color:rgba(255,255,255,0.7); font-size:12px; font-style:italic; margin-top:5px; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div id="page1">
+  <div class="stars-bg" id="starsContainer"></div>
+  <div class="deco-row">🌸 🎀 💖 🌺 🎀 🌸</div>
+  <div class="welcome-title">
+    "Best wishes to a favorite person can never be late.
+    The moment they arrive, the day becomes even more special."
+    <span>✨ A little late... ✨</span>
+  </div>
+  <div class="deco-row">🦋 🌼 💝 🌼 🦋</div>
+  <div class="question-box">
+    <p id="noQuestion">Hey you... 🥺 Is this okay? Would you accept these late wishes? 🎀</p>
+    <div>
+      <button class="btn-yes" onclick="pressYes()">Yes! 💖</button>
+      <button class="btn-no" id="noBtn" onclick="pressNo()">No 😤</button>
+    </div>
+    <p id="noCounter" style="color:white;margin-top:10px;font-size:13px;display:none;"></p>
+  </div>
+</div>
+
+<!-- Angel popup (small) -->
+<div class="video-popup" id="angelPopup">
+  <button class="popup-close" onclick="closeAngel()">✕</button>
+  <video id="angelVideo" controls>
+    <source src="" type="video/mp4">
+  </video>
+  <p style="color:#ff9ed8;font-size:12px;text-align:center;margin-top:5px;">🕊️ This angel says hi! 🕊️</p>
+</div>
+
+<!-- CELEBRATION PAGE -->
+<div id="pageCelebration">
+  <div style="position:relative;z-index:1;">
+    <div class="celebration-text">🎉 YAY!!! 🎉</div>
+    <div style="font-size:clamp(18px,4vw,32px);color:white;text-shadow:2px 2px 8px rgba(0,0,0,0.3);margin-bottom:10px;">Thank you soooo much! 💖</div>
+    <div style="font-size:clamp(14px,3vw,20px);color:rgba(255,255,255,0.9);margin-bottom:25px;">Now explore what's inside for you! 🎁</div>
+    <div class="options-grid">
+      <div class="option-card" onclick="goVerify(1)">
+        <span class="emoji">📺</span>
+        <h3>Your Favourite Show</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,0.8);">Can you guess the password? 😏</p>
+      </div>
+      <div class="option-card" onclick="goVerify(2)">
+        <span class="emoji">🍰</span>
+        <h3>Your Birthday Surprise</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,0.8);">Something sweet is waiting! 🥭</p>
+      </div>
+      <div class="option-card" onclick="goVerify(3)">
+        <span class="emoji">🎬</span>
+        <h3>A Special Message</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,0.8);">From your favourite place! 💙</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY 1 -->
+<div id="verifyPage1" class="verify-page">
+  <div class="verify-card">
+    <div style="font-size:60px;margin-bottom:15px;">🎭</div>
+    <h2>Secret Password! 🤫</h2>
+    <p>Okay okay... let's see if you REALLY know yourself! 😂<br>What is your favourite cartoon show?</p>
+    <input class="verify-input" id="input1" placeholder="Hint: Think about a naughty cat... 🐱" onkeypress="if(event.key==='Enter')check1()">
+    <div class="verify-hint">💡 Hint: The cat's name rhymes with "Mom"...</div>
+    <div id="error1" class="verify-error">Arey! Wrong answer! 😂 Think again... the cat! THE CAT! 🐱</div>
+    <div><button class="verify-btn" onclick="check1()">Submit! 🎯</button></div>
+  </div>
+  <button class="back-btn" onclick="goBack()">⬅ Back</button>
+</div>
+
+<!-- CONTENT 1 -->
+<div id="contentPage1" class="content-page" style="align-items:center;">
+  <h2 class="page-header-text" style="z-index:10;position:relative;">🎉 TOM & JERRY TIME!! 🎉</h2>
+  <div class="center-video-wrap" style="position:relative;z-index:10;">
+    <video controls autoplay style="width:100%;border-radius:12px;display:block;">
+      <source src="birthday_tom_and_jerrymp__Happy_Birthday_Januuuuu_.mp4" type="video/mp4">
+    </video>
+    <p class="upload-note">🐱 Tom's favourite episode — just for you! 🐭</p>
+  </div>
+  <button class="back-btn" style="position:relative;z-index:10;margin-top:15px;" onclick="goBack()">⬅ Back to Surprises</button>
+</div>
+
+<!-- VERIFY 2 -->
+<div id="verifyPage2" class="verify-page">
+  <div class="verify-card">
+    <div style="font-size:60px;margin-bottom:15px;">🍓</div>
+    <h2>Another Secret! 😜</h2>
+    <p>Ohh so you think you know yourself? Let's check! 😂<br>Tell me your absolutely FAVOURITE fruit!</p>
+    <input class="verify-input" id="input2" placeholder="Hint: It's yellow and juicy... 🟡" onkeypress="if(event.key==='Enter')check2()">
+    <div class="verify-hint">💡 Hint: King of all fruits! Starts with M... 😏</div>
+    <div id="error2" class="verify-error">Hahhaha wrong! 🤣 Come on... the KING of fruits! The yellow juicy one! 🟡</div>
+    <div><button class="verify-btn" onclick="check2()">Submit! 🎯</button></div>
+  </div>
+  <button class="back-btn" onclick="goBack()">⬅ Back</button>
+</div>
+
+<!-- CONTENT 2 -->
+<div id="contentPage2" class="content-page" style="align-items:center;">
+  <h2 class="page-header-text" style="z-index:10;position:relative;text-align:center;">Happy Birthday Surprise! 🎂💖</h2>
+  <div style="position:relative;z-index:10;text-align:center;">
+    <p style="color:white;font-size:18px;margin-bottom:5px;text-shadow:1px 1px 4px rgba(0,0,0,0.3);">First... there's a little treat for you! 🧇</p>
+    <p style="color:rgba(255,255,255,0.9);font-size:14px;margin-bottom:15px;">Touch the waffle to break it and reveal your surprise! 👇</p>
+    <div class="wafer-container" onclick="breakWafer()">
+      <div id="waferWhole" class="wafer-img">🧇</div>
+      <div id="waferBroken" class="wafer-msg">💥🧇💥<br><span style="font-size:20px;">CRACK!</span></div>
+    </div>
+    <div id="waferPopMsg" style="display:none;color:white;font-size:clamp(20px,4vw,32px);text-shadow:2px 2px 8px rgba(0,0,0,0.3);margin:15px 0;animation:popIn 0.5s ease-out;">
+      🎉 HAPPPPYYYY BIRTHDAYYY..!! 🎉<br>
+      <span style="font-size:clamp(14px,2.5vw,18px);">You are absolutely amazing!! 💖✨</span>
+    </div>
+    <div id="cakeSection" class="cake-section" style="display:none;">
+      <div style="height:2px;background:rgba(255,255,255,0.3);margin:20px auto;max-width:300px;"></div>
+      <p style="color:white;font-size:18px;text-shadow:1px 1px 4px rgba(0,0,0,0.3);margin-bottom:10px;">And here's your birthday cake! 🎂</p>
+      <span id="cakeEmoji" class="cake-emoji">🎂</span>
+      <div id="birthdayBanner" class="birthday-banner">🎊 HAPPY BIRTHDAY!! Jahnavi...!! 🎊</div>
+      <button class="candle-btn" id="candleBtn" onclick="blowCandles()">🎈 Blow the Candles! 🎈</button>
+    </div>
+  </div>
+  <button class="back-btn" style="position:relative;z-index:10;margin-top:20px;" onclick="goBack()">⬅ Back to Surprises</button>
+</div>
+
+<!-- VERIFY 3 -->
+<div id="verifyPage3" class="verify-page">
+  <div class="verify-card">
+    <div style="font-size:60px;margin-bottom:15px;">🎬</div>
+    <h2>Last Secret! 🌊</h2>
+    <p>One final test before your special message! 😊<br>What is your favourite Telugu movie?</p>
+    <input class="verify-input" id="input3" placeholder="Hint: Think about YOUR place... 🌊" onkeypress="if(event.key==='Enter')check3()">
+    <div class="verify-hint">💡 Hint: It's a river... a beautiful beautiful river... 💙</div>
+    <div id="error3" class="verify-error">Wrong!! 😄 Think about the river... your home... GODAVARI!! 🌊</div>
+    <div><button class="verify-btn" onclick="check3()">Submit! 🎯</button></div>
+  </div>
+  <button class="back-btn" onclick="goBack()">⬅ Back</button>
+</div>
+
+<!-- CONTENT 3 -->
+<div id="contentPage3" class="content-page">
+  <div class="godavari-deco">🌊 🌸 💙 🌸 🌊</div>
+  <h2 class="page3-title">Godavari — Your Favourite 💙</h2>
+  <div class="center-video-wrap" style="border-color:#7eb8ff;box-shadow:0 0 50px rgba(126,184,255,0.7);max-width:650px;">
+    <video controls autoplay style="width:100%;border-radius:12px;display:block;">
+      <source src="WhatsApp%20Video%202026-05-24%20at%201.53.22%20AM.mp4" type="video/mp4">
+    </video>
+    <p style="color:#1a3c6e;font-size:13px;text-align:center;margin-top:8px;font-style:italic;">🎬 Replace this with your video link 🎬</p>
+  </div>
+  <div style="height:30px;"></div>
+  <div style="display:flex;gap:15px;flex-wrap:wrap;justify-content:center;">
+    <button class="wish-btn" onclick="showHisWishes()">💌 His Wishes</button>
+    <button class="wish-btn" onclick="showHisWords()">🗣️ His Words</button>
+  </div>
+  <button class="back-btn" style="color:#1a3c6e;border-color:#1a3c6e;margin-top:20px;" onclick="goBack()">⬅ Back to Surprises</button>
+</div>
+
+<!-- HIS WISHES — VIDEO POPUP -->
+<div class="wishes-video-popup" id="wishesVideoPopup">
+  <button class="wishes-popup-close" onclick="closeWishesVideo()">✕</button>
+  <video id="wishesVideo" controls style="width:480px;max-width:88vw;border-radius:12px;display:block;">
+    <source src="e_c_f_f_emp_.mp4" type="video/mp4">
+  </video>
+  <p>💌 His wishes</p>
+</div>
+
+<!-- HIS WORDS — TEXT POPUP -->
+<div class="overlay" id="overlay" onclick="closeTextPopup()"></div>
+<div class="text-popup" id="wordsPopup">
+  <h3>🗣️ His Words 🗣️</h3>
+  <p>
+    You are one of the most genuine people I have ever met. Every time I talk with you, it feels peaceful and refreshing, and it gives my mind a sense of calm and comfort. Sharing everything that happens each day with you and laughing together brings me so much happiness.
+
+The way you handle responsibilities proved to me that not everyone is the same. I truly admire the passion within you to become independent and work towards your dreams — not everyone has that mindset. The situations you faced in your life were terrible, yet you overcame them with courage and a smile. I know there are still many challenges ahead, but I truly believe you will become successful in life.<br><br>
+
+People like me may come and go in your life, but one thing I will always want from you is this: keep going, no matter what. 🎉
+  </p>
+  <div style="margin-top:20px;">
+    <button class="verify-btn" onclick="closeTextPopup()" style="border-color:#d63384;color:#d63384;background:transparent;">Close 💙</button>
+  </div>
+</div>
+
+<script>
+let noCount = 0;
+let waferBroken = false;
+let candlesBlown = false;
+const noMessages = [
+  "Wait... are you sure? 🥺",
+  "Noooo please!! 🙏",
+  "Okay I'll ask the angel to convince you... 🕊️",
+  "Pleaseeee? Just once? 🥺💖",
+  "Okay okay... last chance! The angel is coming!! 😄",
+  "Fine... but the angel says YES!! 🕊️✨"
+];
+
+(function createStars() {
+  const c = document.getElementById('starsContainer');
+  for (let i = 0; i < 50; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 6 + 2;
+    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s;`;
+    c.appendChild(s);
+  }
+})();
+
+function pressNo() {
+  noCount++;
+  const btn = document.getElementById('noBtn');
+  const q = document.getElementById('noQuestion');
+  const counter = document.getElementById('noCounter');
+  const maxX = window.innerWidth - 120, maxY = window.innerHeight - 60;
+  btn.style.cssText = `position:fixed;left:${Math.random()*maxX}px;top:${Math.random()*maxY}px;z-index:9999;background:linear-gradient(135deg,#7eb8ff,#a78bfa);border:none;color:white;font-size:18px;padding:15px 40px;border-radius:50px;cursor:pointer;font-family:Georgia,serif;`;
+  if (noCount <= noMessages.length) q.textContent = noMessages[noCount-1];
+  counter.style.display = 'block';
+  counter.textContent = `You pressed No ${noCount} time${noCount>1?'s':''}... 😅`;
+  if (noCount === 3) showAngel();
+  if (noCount >= 6) { btn.style.display = 'none'; q.textContent = "The angel decided it's YES!! 🕊️💖"; setTimeout(pressYes, 2000); }
+}
+
+function showAngel() {
+  document.getElementById('angelPopup').style.display = 'block';
+  const v = document.getElementById('angelVideo');
+  v.play().catch(()=>{});
+  v.onended = closeAngel;
+}
+function closeAngel() {
+  document.getElementById('angelPopup').style.display = 'none';
+  document.getElementById('angelVideo').pause();
+}
+
+function pressYes() {
+  document.getElementById('page1').style.display = 'none';
+  document.getElementById('pageCelebration').style.display = 'flex';
+  launchConfetti(); launchHearts();
+}
+
+function goVerify(num) {
+  document.getElementById('pageCelebration').style.display = 'none';
+  document.getElementById('verifyPage'+num).style.display = 'flex';
+}
+
+function goBack() {
+  ['verifyPage1','verifyPage2','verifyPage3','contentPage1','contentPage2','contentPage3'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.querySelectorAll('.cartoon-float,.mango-runner').forEach(e => e.remove());
+  document.getElementById('pageCelebration').style.display = 'flex';
+}
+
+function check1() {
+  const v = document.getElementById('input1').value.trim().toLowerCase();
+  const e = document.getElementById('error1');
+  if (v==='tom'||v==='tom and jerry'||v==='tom & jerry') {
+    e.style.display='none';
+    document.getElementById('verifyPage1').style.display='none';
+    document.getElementById('contentPage1').style.display='flex';
+    launchCartoons();
+  } else { showError(e); }
+}
+function check2() {
+  const v = document.getElementById('input2').value.trim().toLowerCase();
+  const e = document.getElementById('error2');
+  if (v==='mango'||v==='mangoes') {
+    e.style.display='none';
+    document.getElementById('verifyPage2').style.display='none';
+    document.getElementById('contentPage2').style.display='flex';
+  } else { showError(e); }
+}
+function check3() {
+  const v = document.getElementById('input3').value.trim().toLowerCase();
+  const e = document.getElementById('error3');
+  if (v==='godavari'||v==='godavari movie') {
+    e.style.display='none';
+    document.getElementById('verifyPage3').style.display='none';
+    document.getElementById('contentPage3').style.display='flex';
+  } else { showError(e); }
+}
+function showError(el) { el.style.display='block'; el.style.animation='none'; void el.offsetWidth; el.style.animation='shake 0.4s ease'; }
+
+function breakWafer() {
+  if (waferBroken) return; waferBroken = true;
+  document.getElementById('waferWhole').style.display='none';
+  document.getElementById('waferBroken').style.display='block';
+  setTimeout(()=>{ document.getElementById('waferPopMsg').style.display='block'; launchConfetti(); setTimeout(()=>{ document.getElementById('cakeSection').style.display='block'; }, 1500); }, 600);
+}
+
+function blowCandles() {
+  if (candlesBlown) return; candlesBlown = true;
+  document.getElementById('birthdayBanner').style.display='block';
+  document.getElementById('candleBtn').style.display='none';
+  launchConfetti();
+  for (let i=0;i<5;i++) setTimeout(()=>{ const m=document.createElement('div'); m.className='mango-runner'; m.textContent='🥭'; m.style.top=(50+Math.random()*40)+'%'; m.style.animationDuration=(2+Math.random()*2)+'s'; m.style.animationDelay=(Math.random())+'s'; document.body.appendChild(m); setTimeout(()=>m.remove(),6000); }, i*800);
+}
+
+function showHisWishes() {
+  document.getElementById('overlay').style.display = 'block';
+  document.getElementById('wishesVideoPopup').style.display = 'block';
+  const v = document.getElementById('wishesVideo');
+  v.play().catch(()=>{});
+  v.onended = closeWishesVideo;
+}
+function closeWishesVideo() {
+  document.getElementById('wishesVideoPopup').style.display = 'none';
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('wishesVideo').pause();
+}
+
+function showHisWords() {
+  document.getElementById('overlay').style.display='block';
+  document.getElementById('wordsPopup').style.display='block';
+}
+function closeTextPopup() {
+  document.getElementById('overlay').style.display='none';
+  document.getElementById('wordsPopup').style.display='none';
+  closeWishesVideo();
+}
+
+function launchConfetti() {
+  const colors=['#ff9ed8','#c4a0ff','#7eb8ff','#ffd700','#ff6b6b','#98fb98','#ff69b4'];
+  for(let i=0;i<80;i++) setTimeout(()=>{ const el=document.createElement('div'); el.className='confetti-piece'; el.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*0.5}s;border-radius:${Math.random()>0.5?'50%':'2px'};`; document.body.appendChild(el); setTimeout(()=>el.remove(),5000); }, i*30);
+}
+function launchHearts() {
+  const emojis=['💖','💗','💕','🌸','✨','🎀','💝'];
+  for(let i=0;i<20;i++) setTimeout(()=>{ const el=document.createElement('div'); el.className='floating-heart'; el.textContent=emojis[Math.floor(Math.random()*emojis.length)]; el.style.cssText=`left:${Math.random()*100}vw;animation-duration:${4+Math.random()*4}s;animation-delay:${Math.random()*2}s;font-size:${16+Math.random()*20}px;`; document.body.appendChild(el); setTimeout(()=>el.remove(),10000); }, i*200);
+}
+function launchCartoons() {
+  const toons=['🐱','🐭','🔥','⚡','🎮','🍕','👊','🌟','💥'];
+  for(let i=0;i<15;i++) setTimeout(()=>{ const el=document.createElement('div'); el.className='cartoon-float'; el.textContent=toons[Math.floor(Math.random()*toons.length)]; el.style.cssText=`left:${Math.random()*100}vw;animation-duration:${5+Math.random()*5}s;animation-delay:${Math.random()*2}s;font-size:${30+Math.random()*30}px;`; document.body.appendChild(el); setTimeout(()=>el.remove(),12000); }, i*300);
+}
+</script>
+</body>
+</html>
